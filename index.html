@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
 <title>DAA Tracer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -12,7 +13,14 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',ui-mono
 header{padding:16px 28px 12px;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
 header h1{font-family:'Syne',system-ui,sans-serif;font-size:1.4rem;font-weight:800;color:var(--accent);}
 header span{font-size:.65rem;color:var(--muted);}
-.layout{display:grid;grid-template-columns:220px 1fr;height:calc(100vh - 53px);}
+.layout{display:grid;grid-template-columns:220px 1fr;height:calc(100vh - 53px);height:calc(100dvh - 53px);}
+.menu-btn,.scrim{display:none;}
+.menu-btn{background:none;border:1px solid var(--border);color:var(--accent);font-size:1.1rem;border-radius:6px;width:40px;height:36px;cursor:pointer;align-self:center;}
+.tbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 18px;border-bottom:1px solid var(--border);}
+.tbar .grow{flex:1;min-width:120px;display:flex;align-items:center;gap:8px}
+.tbar input[type=range]{min-width:80px}
+.viz-area{-webkit-overflow-scrolling:touch;}
+.rg{display:flex;align-items:center;gap:6px}
 .sidebar{background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;padding:10px 0;}
 .sidebar-label{font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:8px 14px 4px;}
 .algo-btn{display:block;width:100%;background:none;border:none;color:var(--text);font-family:inherit;font-size:.72rem;text-align:left;padding:7px 14px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;}
@@ -43,7 +51,6 @@ textarea{width:420px;max-width:100%;height:150px;resize:vertical;white-space:pre
 .viz-area{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;overflow:auto;position:relative;flex:1;min-height:200px;}
 .viz-title{font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);position:absolute;top:8px;left:11px;}
 .viz-grid{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px;padding-top:12px;}
-@media(max-width:900px){.layout{grid-template-columns:1fr;height:auto}.sidebar{max-height:180px;border-right:none;border-bottom:1px solid var(--border)}.viz-grid{grid-template-columns:1fr}.content{overflow:visible}.main{overflow:visible}}
 .side-box{background:var(--node-bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:.66rem;}
 .side-box .sb-title{font-size:.55rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px;}
 .pseudo-line{padding:1px 5px;border-radius:3px;white-space:pre-wrap;color:#94a3b8;border-left:2px solid transparent;}
@@ -110,26 +117,76 @@ svg text{font-family:inherit;}
 .vtable td.chg{background:rgba(255,215,0,.15);}
 .out{background:#000;border:1px solid var(--border);border-radius:5px;padding:6px 10px;color:var(--accent);font-size:.75rem;min-height:30px;white-space:pre-wrap;}
 .note{font-size:.62rem;color:var(--muted);margin-top:8px;line-height:1.5;}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  body{overflow-x:hidden}
+  header{padding:10px 14px;position:sticky;top:0;z-index:30;background:var(--bg);gap:10px;align-items:center}
+  header h1{font-size:1.15rem}
+  header span{display:none}
+  .menu-btn{display:block}
+  .layout{display:block;height:auto}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:min(82vw,300px);z-index:50;transform:translateX(-102%);transition:transform .22s ease;border-right:1px solid var(--border);padding-top:calc(10px + env(safe-area-inset-top));box-shadow:none}
+  body.menu-open .sidebar{transform:none;box-shadow:8px 0 30px rgba(0,0,0,.6)}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40}
+  body.menu-open .scrim{display:block}
+  body.menu-open{overflow:hidden}
+  .algo-btn{padding:12px 16px;font-size:.8rem}
+  .main{overflow:visible}
+  .controls{padding:10px 14px;gap:10px}
+  .ctrl-group{flex:1 1 100%;flex-wrap:wrap}
+  .ctrl-group .ctrl-label{min-width:84px}
+  .ctrl-group input[type=text],.ctrl-group select,.ctrl-group input[type=number]{flex:1;min-width:0;width:auto !important}
+  input[type=number],input[type=text],select,textarea{font-size:16px;padding:9px 10px}
+  textarea{width:100%;height:170px;font-size:14px}
+  .tbar{position:sticky;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--border);border-bottom:none;padding:8px 10px calc(8px + env(safe-area-inset-bottom));gap:6px;order:9;box-shadow:0 -6px 18px rgba(0,0,0,.5)}
+  .tbar .btn{flex:1 1 auto;padding:11px 6px;font-size:.75rem;min-width:56px}
+  .tbar .divider{display:none}
+  .rg{flex:1 1 44%}
+  .tbar input[type=range]{flex:1;min-width:70px;height:28px;width:auto !important}
+  .speed-range{width:auto}
+  .step-count{margin-left:0;flex:1 0 100%;text-align:center;order:-1}
+  .main{display:flex;flex-direction:column}
+  #controls{order:0}.content{order:1;overflow:visible;padding:10px 12px 14px}.tbar{order:2}
+  .viz-area{padding:12px 10px;min-height:0;flex:none;overflow-x:auto}
+  .viz-grid{grid-template-columns:1fr;gap:10px;padding-top:14px}
+  .cell-val{width:36px;height:36px;font-size:.74rem}
+  .cell{margin:1px}
+  .sq{width:min(11vw,44px);height:min(11vw,44px);font-size:1.15rem}
+  .board{grid-template-columns:repeat(var(--n),min(11vw,44px)) !important}
+  .iter-bar{gap:10px 14px;padding:6px 10px}
+  .log-panel{height:160px}
+  .status-bar{font-size:.78rem;line-height:1.45;padding:8px 10px;order:-1;background:var(--panel);border:1px solid var(--border);border-radius:8px;position:sticky;top:58px;z-index:10}
+  .legend{order:-1}
+  .code{max-height:260px}
+  .side-box{font-size:.7rem}
+  .dp-table td{padding:4px 5px;min-width:26px}
+}
+@media(min-width:901px) and (max-width:1250px){.viz-grid{grid-template-columns:minmax(0,1fr) 210px}}
+@media(hover:none){.algo-btn:hover{background:none;color:var(--text)}.algo-btn.active:hover{background:rgba(0,245,160,.1);color:var(--accent)}}
+@media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
 <body>
 <header>
+  <button class="menu-btn" id="menuBtn" aria-label="Open algorithm menu" aria-expanded="false">☰</button>
   <h1>DAA Tracer</h1>
   <span>Search · Sort · Graphs · DP · Backtracking · Branch &amp; Bound · Recursion · Code</span>
 </header>
 <div class="layout">
+<div class="scrim" id="scrim"></div>
 <nav class="sidebar" id="sidebar"></nav>
 <div class="main">
   <div class="controls" id="controls"></div>
-  <div class="controls">
+  <div class="controls tbar" id="tbar">
     <button class="btn btn-primary" id="runBtn">▶ Run</button>
     <button class="btn btn-secondary" id="prevBtn">◀ Prev</button>
     <button class="btn btn-secondary" id="stepBtn">Step ▶</button>
     <button class="btn btn-secondary" id="resetBtn">↺ Reset</button>
     <button class="btn btn-secondary" id="endBtn">End ⏭</button>
     <div class="divider"></div>
-    <span class="ctrl-label">Speed</span><input class="speed-range" type="range" id="speed" min="1" max="10" value="6">
-    <input type="range" id="scrub" min="0" max="0" value="0" style="accent-color:var(--accent);width:160px" aria-label="Step slider">
+    <label class="rg"><span class="ctrl-label">Speed</span><input class="speed-range" type="range" id="speed" min="1" max="10" value="6" aria-label="Speed"></label>
+    <label class="rg"><span class="ctrl-label">Step</span><input type="range" id="scrub" min="0" max="0" value="0" style="accent-color:var(--accent);width:160px" aria-label="Step slider"></label>
     <span class="step-count" id="stepCount">Step 0 / 0</span>
   </div>
   <div class="content">
@@ -427,7 +484,7 @@ function renderDP(f) {
 }
 function renderQueens(f) {
   let h = `<div class="iter-bar"><div class="iter-var"><span class="vname">placements</span><span class="vval">${f.placements}</span></div><div class="iter-var"><span class="vname">backtracks</span><span class="vval">${f.backtracks}</span></div><div class="iter-var"><span class="vname">solutions</span><span class="vval">${f.solutions}</span></div></div>`;
-  h += `<div class="board" style="grid-template-columns:repeat(${f.n},44px)">`;
+  h += `<div class="board" style="--n:${f.n};grid-template-columns:repeat(${f.n},44px)">`;
   for (let r = 0; r < f.n; r++) for (let c = 0; c < f.n; c++) {
     let cls = (r + c) % 2 ? "d" : "l";
     if (f.conflict && f.conflict[0] === r && f.conflict[1] === c) cls += " att";
@@ -445,7 +502,8 @@ function renderBnB(f) {
   walk(0);
   const W = 82, H = 78, maxL = Math.max(...f.nodes.map((n) => n.level));
   const px = (id) => 40 + x[id] * W, py = (n) => 34 + n.level * H, fm = (v) => (Number.isInteger(v) ? v : v.toFixed(1));
-  let s = `<svg width="${Math.max(leaf * W + 40, 300)}" height="${(maxL + 1) * H + 20}">`;
+  const bw = Math.max(leaf * W + 40, 300), bh = (maxL + 1) * H + 20;
+  let s = `<svg viewBox="0 0 ${bw} ${bh}" style="width:100%;min-width:${Math.min(bw, 320)}px;max-width:${bw}px;height:auto">`;
   f.nodes.filter((n) => n.parent !== null).forEach((n) => { const p = f.nodes[n.parent];
     s += `<line x1="${px(p.id)}" y1="${py(p) + 18}" x2="${px(n.id)}" y2="${py(n) - 18}" stroke="#334155" stroke-width="1.5"/><text x="${(px(p.id) + px(n.id)) / 2 + (n.take ? -8 : 8)}" y="${(py(p) + py(n)) / 2}" font-size="9" fill="#94a3b8" text-anchor="middle">${n.take ? "take" : "skip"}</text>`; });
   f.nodes.forEach((n) => { const c = BBC[n.status], cur = f.current === n.id;
@@ -461,7 +519,8 @@ function renderRec(f, tree) {
   const walk = (id) => { const c = kids[id]; if (!c.length) { x[id] = leaf++; return; } c.forEach(walk); x[id] = (x[c[0]] + x[c[c.length - 1]]) / 2; };
   walk(0);
   const W = 78, H = 62, maxD = Math.max(...tree.nodes.map((n) => n.depth));
-  let s = `<svg width="${Math.max(leaf * W + 40, 260)}" height="${maxD * H + 50}">`;
+  const rw = Math.max(leaf * W + 40, 260), rh = maxD * H + 50;
+  let s = `<svg viewBox="0 0 ${rw} ${rh}" style="width:100%;min-width:${Math.min(rw, 300)}px;max-width:${rw}px;height:auto">`;
   tree.nodes.forEach((n) => { if (n.parent !== null && f.state[n.id] !== "hidden") s += `<line x1="${30 + x[n.parent] * W}" y1="${24 + (tree.nodes[n.parent].depth - 1) * H + 16}" x2="${30 + x[n.id] * W}" y2="${24 + (n.depth - 1) * H - 16}" stroke="#334155" stroke-width="1.5"/>`; });
   tree.nodes.forEach((n) => { const st = f.state[n.id]; if (st === "hidden") return;
     const cx = 30 + x[n.id] * W, cy = 24 + (n.depth - 1) * H, col = st === "done" ? "#00f5a0" : "#06b6d4";
@@ -527,7 +586,12 @@ function buildControls(a) {
   });
   if (a.id === "code") { const sm = $("c_sample"); $("c_code").value = SAMPLES[0].code; sm.value = SAMPLES[0].id; }
 }
+function menu(open) { document.body.classList.toggle("menu-open", open); $("menuBtn").setAttribute("aria-expanded", open); }
+$("menuBtn").onclick = () => menu(!document.body.classList.contains("menu-open"));
+$("scrim").onclick = () => menu(false);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") menu(false); if (e.target.matches("input,textarea,select")) return; if (e.key === "ArrowRight") { $("stepBtn").click(); } if (e.key === "ArrowLeft") { $("prevBtn").click(); } if (e.key === " ") { e.preventDefault(); run(); } });
 function sel(id) {
+  menu(false);
   stop();
   S.algo = ALG[id];
   document.querySelectorAll(".algo-btn").forEach((b) => b.classList.toggle("active", b.dataset.id === id));
@@ -563,6 +627,7 @@ function show(rebuildLog) {
   const facts = v.facts && v.facts.length ? `<div class="side-box"><div class="sb-title">Facts</div><div class="facts">${v.facts.map(([k, x]) => `<span>${esc(k)}</span><b>${esc(x)}</b>`).join("")}</div></div>` : "";
   const pseudo = v.pseudo ? `<div class="side-box"><div class="sb-title">Pseudocode</div>${v.pseudo.map((l, i) => `<div class="pseudo-line ${i === lineOf(f) ? "on" : ""}">${esc(l)}</div>`).join("")}</div>` : "";
   $("viz").innerHTML = `<div class="viz-grid"><div style="min-width:0;overflow:auto">${v.render(f, S.idx, S.frames)}${v.note ? `<div class="note">${esc(v.note)}</div>` : ""}</div><div>${side}${pseudo}${facts}</div></div>`;
+  if (S.algo.id === "bnb" || S.algo.id.indexOf("rec-") === 0) { const sc = $("viz").querySelector(".viz-grid > div"); if (sc) sc.scrollLeft = (sc.scrollWidth - sc.clientWidth) / 2; }
   $("status").textContent = msgOf(f);
   $("stepCount").textContent = `Step ${S.idx + 1} / ${n}`;
   $("scrub").value = S.idx;
